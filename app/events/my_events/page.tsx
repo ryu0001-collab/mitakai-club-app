@@ -22,7 +22,7 @@ export default function MyEventsPage() {
   useEffect(() => { reload(); }, []);
 
   return (
-    <div className="flex-1 flex flex-col pb-24">
+    <div className="flex-1 flex flex-col pb-28">
       {/* ヘッダー */}
       <header className="sticky top-0 z-50 flex items-center px-4 h-[60px] border-b border-gray-200 bg-white shrink-0">
         <button
@@ -75,7 +75,7 @@ export default function MyEventsPage() {
       <button
         onClick={() => router.push("/events/my_events/new")}
         className="fixed z-40 flex items-center gap-2 bg-blue-600 text-white text-sm font-medium px-5 py-3 rounded-full shadow-lg"
-        style={{ bottom: "80px", right: "16px" }}
+        style={{ bottom: "100px", right: "16px" }}
       >
         <Pencil size={16} />
         新規イベントを作成

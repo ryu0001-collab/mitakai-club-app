@@ -31,8 +31,8 @@ export default function Nav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 h-16 flex justify-around items-center"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 flex justify-around items-center"
+      style={{ height: "84px", paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       {tabs.map(({ href, label, Icon }) => {
         const active = activeSection === href;
@@ -40,10 +40,10 @@ export default function Nav() {
           <Link
             key={href}
             href={href}
-            className={`flex flex-col items-center gap-0.5 py-2 px-4 ${active ? "text-blue-600" : "text-gray-400"}`}
+            className={`flex flex-col items-center gap-1 py-3 px-4 ${active ? "text-blue-600" : "text-gray-400"}`}
           >
-            <Icon size={24} />
-            <span className="text-[10px]">{label}</span>
+            <Icon size={28} />
+            <span className="text-[12px]">{label}</span>
           </Link>
         );
       })}

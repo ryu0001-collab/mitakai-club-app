@@ -20,7 +20,7 @@ export default function EventDetailPage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col pb-20">
+    <div className="flex-1 flex flex-col pb-28">
 
       {/* サムネイル（戻るボタン付き） */}
       <div className="relative w-full aspect-video bg-gray-100 shrink-0">

@@ -74,7 +74,7 @@ export default function EventsPage() {
       <Link
         href="/events/my_events"
         className="fixed z-40 flex items-center gap-2 bg-white border border-blue-600 text-blue-600 text-sm font-medium px-4 py-2.5 rounded-full shadow-md"
-        style={{ bottom: "80px", right: "16px" }}
+        style={{ bottom: "100px", right: "16px" }}
       >
         <CalendarDays size={16} />
         イベントを追加
