@@ -219,19 +219,30 @@ function SelectField({
   );
 }
 
+const BIO_MAX = 20;
+
 function TextAreaField({
   label, value, onChange,
 }: {
   label: string; value: string;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }) {
+  const over = value.length > BIO_MAX;
   return (
     <div>
-      <label className="text-xs text-gray-400 mb-1 block">{label}</label>
+      <div className="flex items-baseline justify-between mb-1">
+        <label className="text-xs text-gray-400">{label}</label>
+        <span className={`text-xs ${over ? "text-red-500 font-medium" : "text-gray-400"}`}>
+          {value.length}/{BIO_MAX}
+        </span>
+      </div>
       <textarea
         value={value}
-        onChange={onChange}
+        onChange={(e) => {
+          if (e.target.value.length <= BIO_MAX) onChange(e);
+        }}
         rows={3}
+        maxLength={BIO_MAX}
         className="w-full border-b border-gray-200 py-2 text-sm text-gray-800 focus:outline-none focus:border-blue-400 bg-transparent resize-none"
       />
     </div>
