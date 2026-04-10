@@ -29,10 +29,18 @@ export function getLastVisitLabel(lastVisitAt: Date): string {
   return `${Math.max(1, Math.floor(elapsed / (1000 * 60 * 60 * 24)))}日前`;
 }
 
+// 起動時刻からの相対時間でleaveTimeを生成（常に未来の時刻になる）
+function makeLeaveTime(hoursFromNow: number): string {
+  const d = new Date(Date.now() + hoursFromNow * 60 * 60 * 1000);
+  const h = Math.min(d.getHours(), 23);
+  const m = Math.floor(d.getMinutes() / 15) * 15;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
 const INITIAL_USERS: PresentUser[] = [
-  { id: "1", name: "伊藤 雅子", faculty: "商学部", dept: "商学部 '15卒", comment: "こんにちは！", avatarUrl: "https://i.pravatar.cc/150?u=1", leaveTime: "21:30" },
-  { id: "2", name: "大沢 幸雄", faculty: "経済学部", dept: "経済学部 '03卒", comment: "婚活中です...", avatarUrl: "https://i.pravatar.cc/150?u=2", leaveTime: "22:00" },
-  { id: "3", name: "田中 みな", faculty: "文学部", dept: "文学部 '09卒", comment: "友達が欲しい", avatarUrl: "https://i.pravatar.cc/150?u=3", leaveTime: null },
+  { id: "1", name: "伊藤 雅子", faculty: "商学部", dept: "商学部 '15卒", comment: "こんにちは！", avatarUrl: "https://i.pravatar.cc/150?u=1", leaveTime: makeLeaveTime(1) },
+  { id: "2", name: "大沢 幸雄", faculty: "経済学部", dept: "経済学部 '03卒", comment: "婚活中です...", avatarUrl: "https://i.pravatar.cc/150?u=2", leaveTime: makeLeaveTime(2) },
+  { id: "3", name: "田中 みな", faculty: "文学部", dept: "文学部 '09卒", comment: "友達が欲しい", avatarUrl: "https://i.pravatar.cc/150?u=3", leaveTime: makeLeaveTime(3) },
 ];
 
 type ContextValue = {
