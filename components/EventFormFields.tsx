@@ -2,6 +2,10 @@
 import { Camera, CalendarDays, Link as LinkIcon, MapPin, X } from "lucide-react";
 import { useRef } from "react";
 import { formatDate } from "@/lib/events";
+import DatePicker, { registerLocale } from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { ja } from "date-fns/locale/ja";
+registerLocale("ja", ja);
 
 export type EventFormState = {
   thumbnailFile: File | null;
@@ -29,10 +33,17 @@ type Props = {
 
 export default function EventFormFields({ form, onChange }: Props) {
   const thumbRef = useRef<HTMLInputElement>(null);
-  const dateRef = useRef<HTMLInputElement>(null);
 
   const set = (key: keyof EventFormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     onChange({ [key]: e.target.value });
+
+  const handleDateChange = (date: Date | null) => {
+    if (!date) return;
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    onChange({ date: `${y}-${m}-${d}` });
+  };
 
   const handleThumb = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -86,13 +97,18 @@ export default function EventFormFields({ form, onChange }: Props) {
 
         {/* 日程 */}
         <Field label="日程" required>
-          <div className="flex items-center gap-2 border-b border-gray-200 py-2 cursor-pointer"
-            onClick={() => dateRef.current?.showPicker?.()}>
+          <div className="flex items-center gap-2 border-b border-gray-200 py-2">
             <CalendarDays size={16} className="text-gray-400 shrink-0" />
-            <span className={`text-sm flex-1 ${form.date ? "text-gray-800" : "text-gray-400"}`}>
-              {form.date ? formatDate(form.date) : "日付を選択"}
-            </span>
-            <input ref={dateRef} type="date" value={form.date} onChange={set("date")} className="sr-only" />
+            <DatePicker
+              locale="ja"
+              selected={form.date ? new Date(form.date) : null}
+              onChange={handleDateChange}
+              dateFormat="yyyy年M月d日（eee）"
+              placeholderText="日付を選択"
+              withPortal
+              className="flex-1 text-sm text-gray-800 focus:outline-none bg-transparent w-full"
+              calendarClassName="!font-sans"
+            />
           </div>
         </Field>
 
