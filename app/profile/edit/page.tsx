@@ -219,7 +219,7 @@ function SelectField({
   );
 }
 
-const BIO_MAX = 20;
+const BIO_MAX = 30;
 
 function TextAreaField({
   label, value, onChange,
