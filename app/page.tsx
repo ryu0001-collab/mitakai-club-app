@@ -5,6 +5,7 @@ import { usePresentUsers, getLastVisitLabel } from "@/context/PresentUsersContex
 import { useCurrentUser, toPresentUser, CURRENT_USER_ID } from "@/context/CurrentUserContext";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Clock } from "lucide-react";
 
 const STATIC_RECENT_USERS = [
   { id: "5", name: "佐藤 健一", faculty: "法学部（法律学科）", dept: "法学部 '98卒", comment: "弁護士やってます", avatarUrl: "https://i.pravatar.cc/150?u=5", lastLogin: "3日前" },
@@ -16,20 +17,48 @@ const STATIC_RECENT_USERS = [
   { id: "11", name: "鈴木 一朗", faculty: "商学部", dept: "商学部 '00卒", comment: "起業準備中！", avatarUrl: "https://i.pravatar.cc/150?u=11", lastLogin: "27日前" },
 ];
 
-function UserRow({ id, name, faculty, dept, comment, avatarUrl, sub }: {
+function isLeaveTimePast(leaveTime: string): boolean {
+  const [h, m] = leaveTime.split(":").map(Number);
+  const now = new Date();
+  const leave = new Date();
+  leave.setHours(h, m, 0, 0);
+  return leave < now;
+}
+
+function UserRow({ id, name, faculty, dept, comment, avatarUrl, sub, leaveTime }: {
   id: string; name: string; faculty: string; dept: string;
-  comment: string; avatarUrl: string | null; sub?: string;
+  comment: string; avatarUrl: string | null; sub?: string; leaveTime?: string | null;
 }) {
+  const past = leaveTime ? isLeaveTimePast(leaveTime) : false;
+
   return (
     <li>
       <Link href={`/profile/${id}`} className="flex items-center gap-4 active:opacity-70 transition">
-        <FacultyRingAvatar avatarUrl={avatarUrl} faculty={faculty} name={name} size={56} ringWidth={3} />
-        <div className="flex-1">
+        {/* アバター＋バッジ */}
+        <div className="relative shrink-0">
+          <FacultyRingAvatar avatarUrl={avatarUrl} faculty={faculty} name={name} size={56} ringWidth={3} />
+          {leaveTime && (
+            <div
+              className={`absolute -bottom-1 -right-1 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-white ${past ? "opacity-40" : ""}`}
+              style={{ border: "0.5px solid #e5e7eb" }}
+            >
+              <Clock size={10} className="text-gray-500 shrink-0" />
+              <span className="text-[10px] text-gray-600 leading-none">{leaveTime}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="flex-1 min-w-0">
           <p className="text-base text-gray-800">{name}</p>
           <p className="text-sm text-gray-500">{dept}</p>
+          {leaveTime && (
+            <p className={`text-[12px] mt-0.5 ${past ? "text-gray-300" : "text-gray-400"}`}>
+              〜{leaveTime}まで滞在予定
+            </p>
+          )}
           {sub && <p className="text-xs text-gray-400 mt-0.5">最終来店: {sub}</p>}
         </div>
-        <p className="text-sm text-gray-700 text-right max-w-[40%]">{comment}</p>
+        <p className="text-sm text-gray-700 text-right max-w-[40%] shrink-0">{comment}</p>
       </Link>
     </li>
   );
@@ -46,10 +75,14 @@ export default function HomePage() {
     return () => clearInterval(id);
   }, []);
 
-  // 自分の最新プロフィールで来店中・退店済みリストを上書き
+  // 自分の最新プロフィールで来店中リストを上書き（leaveTimeはContextの値を維持）
   const me = toPresentUser(profile);
-  const displayPresentUsers = presentUsers.map((u) => u.id === CURRENT_USER_ID ? me : u);
-  const displayRecentVisitors = recentVisitors.map((v) => v.id === CURRENT_USER_ID ? { ...me, lastVisitAt: v.lastVisitAt } : v);
+  const displayPresentUsers = presentUsers.map((u) =>
+    u.id === CURRENT_USER_ID ? { ...me, leaveTime: u.leaveTime } : u
+  );
+  const displayRecentVisitors = recentVisitors.map((v) =>
+    v.id === CURRENT_USER_ID ? { ...me, leaveTime: v.leaveTime, lastVisitAt: v.lastVisitAt } : v
+  );
 
   // 動的な退店ユーザーを先頭に、静的ダミーを後ろに結合
   const recentSection = [
@@ -60,6 +93,7 @@ export default function HomePage() {
       dept: v.dept,
       comment: v.comment,
       avatarUrl: v.avatarUrl,
+      leaveTime: null as string | null,
       lastLogin: getLastVisitLabel(v.lastVisitAt),
     })),
     ...STATIC_RECENT_USERS.filter((u) => !recentVisitors.some((v) => v.id === u.id)),
@@ -89,7 +123,7 @@ export default function HomePage() {
           <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">過去30日以内に来店した人</h2>
           <ul className="space-y-6">
             {recentSection.map((u) => (
-              <UserRow key={u.id} {...u} sub={u.lastLogin} />
+              <UserRow key={u.id} {...u} sub={"lastLogin" in u ? u.lastLogin : undefined} />
             ))}
           </ul>
         </section>

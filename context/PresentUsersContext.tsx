@@ -8,6 +8,7 @@ export type PresentUser = {
   dept: string;
   comment: string;
   avatarUrl: string | null;
+  leaveTime: string | null; // 例："22:00"、未設定はnull
 };
 
 export type RecentVisitor = PresentUser & {
@@ -29,9 +30,9 @@ export function getLastVisitLabel(lastVisitAt: Date): string {
 }
 
 const INITIAL_USERS: PresentUser[] = [
-  { id: "1", name: "伊藤 雅子", faculty: "商学部", dept: "商学部 '15卒", comment: "こんにちは！", avatarUrl: "https://i.pravatar.cc/150?u=1" },
-  { id: "2", name: "大沢 幸雄", faculty: "経済学部", dept: "経済学部 '03卒", comment: "婚活中です...", avatarUrl: "https://i.pravatar.cc/150?u=2" },
-  { id: "3", name: "田中 みな", faculty: "文学部", dept: "文学部 '09卒", comment: "友達が欲しい", avatarUrl: "https://i.pravatar.cc/150?u=3" },
+  { id: "1", name: "伊藤 雅子", faculty: "商学部", dept: "商学部 '15卒", comment: "こんにちは！", avatarUrl: "https://i.pravatar.cc/150?u=1", leaveTime: "21:30" },
+  { id: "2", name: "大沢 幸雄", faculty: "経済学部", dept: "経済学部 '03卒", comment: "婚活中です...", avatarUrl: "https://i.pravatar.cc/150?u=2", leaveTime: "22:00" },
+  { id: "3", name: "田中 みな", faculty: "文学部", dept: "文学部 '09卒", comment: "友達が欲しい", avatarUrl: "https://i.pravatar.cc/150?u=3", leaveTime: null },
 ];
 
 type ContextValue = {
@@ -50,7 +51,6 @@ export function PresentUsersProvider({ children }: { children: React.ReactNode }
   );
   const [recentVisitors, setRecentVisitors] = useState<RecentVisitor[]>([]);
 
-  // インターバルから現在のstateを読むためのref
   const presentRef = useRef<PresentUserWithTime[]>([]);
   useEffect(() => { presentRef.current = presentUsersWithTime; }, [presentUsersWithTime]);
 
@@ -101,7 +101,6 @@ export function PresentUsersProvider({ children }: { children: React.ReactNode }
     });
   };
 
-  // 外部に公開するpresentUsersはcheckedInAtを除去
   const presentUsers: PresentUser[] = presentUsersWithTime.map(
     ({ checkedInAt: _, ...u }) => u
   );

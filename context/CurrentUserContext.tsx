@@ -43,6 +43,7 @@ export function toPresentUser(p: ProfileData): PresentUser {
     dept: `${p.dept} '${String(p.gradYear).slice(-2)}卒`,
     comment: p.bio,
     avatarUrl: p.avatarImage,
+    leaveTime: null,
   };
 }
 
