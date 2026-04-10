@@ -4,6 +4,7 @@ import FacultyRingAvatar from "@/components/FacultyRingAvatar";
 import { usePresentUsers } from "@/context/PresentUsersContext";
 import { useCurrentUser, toPresentUser } from "@/context/CurrentUserContext";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type ScanStatus = "idle" | "scanning" | "entrance" | "exit" | "error";
 
@@ -16,6 +17,7 @@ function parseQR(raw: string): "entrance" | "exit" | null {
 export default function ScanPage() {
   const { addUser, checkOutUser } = usePresentUsers();
   const { profile } = useCurrentUser();
+  const router = useRouter();
   const [status, setStatus] = useState<ScanStatus>("idle");
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<import("html5-qrcode").Html5Qrcode | null>(null);
@@ -42,9 +44,11 @@ export default function ScanPage() {
             if (type === "entrance") {
               addUser(me);
               setStatus("entrance");
+              setTimeout(() => router.push("/"), 1500);
             } else if (type === "exit") {
               checkOutUser(me);
               setStatus("exit");
+              setTimeout(() => router.push("/"), 1500);
             } else {
               setError("無効なQRコードです");
               setStatus("error");
