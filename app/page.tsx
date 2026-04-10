@@ -17,20 +17,10 @@ const STATIC_RECENT_USERS = [
   { id: "11", name: "鈴木 一朗", faculty: "商学部", dept: "商学部 '00卒", comment: "起業準備中！", avatarUrl: "https://i.pravatar.cc/150?u=11", lastLogin: "27日前" },
 ];
 
-function isLeaveTimePast(leaveTime: string): boolean {
-  const [h, m] = leaveTime.split(":").map(Number);
-  const now = new Date();
-  const leave = new Date();
-  leave.setHours(h, m, 0, 0);
-  return leave < now;
-}
-
 function UserRow({ id, name, faculty, dept, comment, avatarUrl, sub, leaveTime }: {
   id: string; name: string; faculty: string; dept: string;
   comment: string; avatarUrl: string | null; sub?: string; leaveTime?: string | null;
 }) {
-  const past = leaveTime ? isLeaveTimePast(leaveTime) : false;
-
   return (
     <li>
       <Link href={`/profile/${id}`} className="flex items-center gap-4 active:opacity-70 transition">
@@ -39,7 +29,7 @@ function UserRow({ id, name, faculty, dept, comment, avatarUrl, sub, leaveTime }
           <FacultyRingAvatar avatarUrl={avatarUrl} faculty={faculty} name={name} size={56} ringWidth={3} />
           {leaveTime && (
             <div
-              className={`absolute -bottom-1 -right-1 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-white ${past ? "opacity-40" : ""}`}
+              className="absolute -bottom-1 -right-1 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-white"
               style={{ border: "0.5px solid #e5e7eb" }}
             >
               <Clock size={10} className="text-gray-500 shrink-0" />
@@ -52,7 +42,7 @@ function UserRow({ id, name, faculty, dept, comment, avatarUrl, sub, leaveTime }
           <p className="text-base text-gray-800">{name}</p>
           <p className="text-sm text-gray-500">{dept}</p>
           {leaveTime && (
-            <p className={`text-[12px] mt-0.5 ${past ? "text-gray-300" : "text-gray-400"}`}>
+            <p className="text-[12px] mt-0.5 text-gray-400">
               〜{leaveTime}まで滞在予定
             </p>
           )}
