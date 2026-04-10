@@ -41,8 +41,8 @@ function makeLeaveTime(hoursFromNow: number): string {
 
 const INITIAL_USERS: PresentUser[] = [
   { id: "1", name: "伊藤 雅子", faculty: "商学部", dept: "商学部 '15卒", comment: "こんにちは！", avatarUrl: "https://i.pravatar.cc/150?u=1", leaveTime: makeLeaveTime(1) },
-  { id: "2", name: "大沢 幸雄", faculty: "経済学部", dept: "経済学部 '03卒", comment: "婚活中です...", avatarUrl: "https://i.pravatar.cc/150?u=2", leaveTime: makeLeaveTime(2) },
-  { id: "3", name: "田中 みな", faculty: "文学部", dept: "文学部 '09卒", comment: "友達が欲しい", avatarUrl: "https://i.pravatar.cc/150?u=3", leaveTime: makeLeaveTime(3) },
+  { id: "2", name: "大沢 幸雄", faculty: "経済学部", dept: "経済学部 '03卒", comment: "婚活中です...", avatarUrl: "https://i.pravatar.cc/150?u=2", leaveTime: "20:30" },
+  { id: "3", name: "田中 みな", faculty: "文学部", dept: "文学部 '09卒", comment: "友達が欲しい", avatarUrl: "https://i.pravatar.cc/150?u=3", leaveTime: "21:45" },
 ];
 
 type ContextValue = {
