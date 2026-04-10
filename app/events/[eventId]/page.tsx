@@ -5,10 +5,12 @@ import { MOCK_EVENTS, formatDate } from "@/lib/events";
 import { getMyEventById } from "@/lib/myEventStore";
 import FacultyRingAvatar from "@/components/FacultyRingAvatar";
 import Link from "next/link";
+import { useCurrentUser, CURRENT_USER_ID } from "@/context/CurrentUserContext";
 
 export default function EventDetailPage() {
   const router = useRouter();
   const { eventId } = useParams<{ eventId: string }>();
+  const { profile } = useCurrentUser();
   const event = MOCK_EVENTS.find((e) => e.id === eventId) ?? getMyEventById(eventId);
 
   if (!event) {
@@ -98,27 +100,34 @@ export default function EventDetailPage() {
         )}
 
         {/* 公開した人 */}
-        {event.creator && (
-          <div className="pb-4">
-            <p className="text-[13px] font-medium text-gray-400 mb-3">このイベントを公開した人</p>
-            <Link
-              href={`/profile/${event.creator.id}`}
-              className="flex items-center gap-4 active:opacity-70 transition"
-            >
-              <FacultyRingAvatar
-                avatarUrl={event.creator.avatarUrl}
-                faculty={event.creator.faculty}
-                name={event.creator.name}
-                size={56}
-                ringWidth={3}
-              />
-              <div>
-                <p className="text-base text-gray-800">{event.creator.name}</p>
-                <p className="text-sm text-gray-500">{event.creator.dept}</p>
-              </div>
-            </Link>
-          </div>
-        )}
+        {event.creator && (() => {
+          const isMe = event.creator.id === CURRENT_USER_ID;
+          const creatorName = isMe ? profile.name : event.creator.name;
+          const creatorDept = isMe ? `${profile.dept} '${String(profile.gradYear).slice(-2)}卒` : event.creator.dept;
+          const creatorFaculty = isMe ? profile.dept : event.creator.faculty;
+          const creatorAvatar = isMe ? profile.avatarImage : event.creator.avatarUrl;
+          return (
+            <div className="pb-4">
+              <p className="text-[13px] font-medium text-gray-400 mb-3">このイベントを公開した人</p>
+              <Link
+                href={`/profile/${event.creator.id}`}
+                className="flex items-center gap-4 active:opacity-70 transition"
+              >
+                <FacultyRingAvatar
+                  avatarUrl={creatorAvatar}
+                  faculty={creatorFaculty}
+                  name={creatorName}
+                  size={56}
+                  ringWidth={3}
+                />
+                <div>
+                  <p className="text-base text-gray-800">{creatorName}</p>
+                  <p className="text-sm text-gray-500">{creatorDept}</p>
+                </div>
+              </Link>
+            </div>
+          );
+        })()}
 
       </div>
     </div>
