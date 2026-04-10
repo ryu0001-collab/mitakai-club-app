@@ -30,10 +30,12 @@ export function getLastVisitLabel(lastVisitAt: Date): string {
 }
 
 // 起動時刻からの相対時間でleaveTimeを生成（常に未来の時刻になる）
+const CLOSE_HOUR = 22;
+
 function makeLeaveTime(hoursFromNow: number): string {
   const d = new Date(Date.now() + hoursFromNow * 60 * 60 * 1000);
-  const h = Math.min(d.getHours(), 23);
-  const m = Math.floor(d.getMinutes() / 15) * 15;
+  const h = Math.min(d.getHours(), CLOSE_HOUR);
+  const m = h === CLOSE_HOUR ? 0 : Math.floor(d.getMinutes() / 15) * 15;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 

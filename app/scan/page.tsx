@@ -9,12 +9,12 @@ import { useRouter } from "next/navigation";
 type ScanStatus = "idle" | "scanning" | "selectLeaveTime" | "entrance" | "exit" | "error";
 
 const MINUTE_OPTIONS = [0, 15, 30, 45];
+const CLOSE_HOUR = 22;
 
 function getDefaultLeaveTime(): { hour: number; minute: number } {
   const d = new Date(Date.now() + 2 * 60 * 60 * 1000);
-  const h = Math.min(d.getHours(), 23);
-  const m = Math.min(Math.floor(d.getMinutes() / 15) * 15, 45);
-  if (h === 23 && m > 45) return { hour: 23, minute: 45 };
+  const h = Math.min(d.getHours(), CLOSE_HOUR);
+  const m = h === CLOSE_HOUR ? 0 : Math.floor(d.getMinutes() / 15) * 15;
   return { hour: h, minute: m };
 }
 
@@ -146,21 +146,26 @@ export default function ScanPage() {
                 {/* 時 */}
                 <select
                   value={leaveHour}
-                  onChange={(e) => setLeaveHour(Number(e.target.value))}
+                  onChange={(e) => {
+                    const h = Number(e.target.value);
+                    setLeaveHour(h);
+                    if (h === CLOSE_HOUR) setLeaveMinute(0);
+                  }}
                   className="w-20 text-center text-2xl font-bold text-gray-800 bg-white border border-gray-200 rounded-xl py-3 focus:outline-none focus:border-blue-400 appearance-none"
                 >
-                  {Array.from({ length: 24 }, (_, i) => (
+                  {Array.from({ length: CLOSE_HOUR + 1 }, (_, i) => (
                     <option key={i} value={i}>{String(i).padStart(2, "0")}</option>
                   ))}
                 </select>
                 <span className="text-2xl font-bold text-gray-400">:</span>
-                {/* 分 */}
+                {/* 分（22時は00のみ） */}
                 <select
                   value={leaveMinute}
                   onChange={(e) => setLeaveMinute(Number(e.target.value))}
-                  className="w-20 text-center text-2xl font-bold text-gray-800 bg-white border border-gray-200 rounded-xl py-3 focus:outline-none focus:border-blue-400 appearance-none"
+                  disabled={leaveHour === CLOSE_HOUR}
+                  className="w-20 text-center text-2xl font-bold text-gray-800 bg-white border border-gray-200 rounded-xl py-3 focus:outline-none focus:border-blue-400 appearance-none disabled:opacity-50"
                 >
-                  {MINUTE_OPTIONS.map((m) => (
+                  {(leaveHour === CLOSE_HOUR ? [0] : MINUTE_OPTIONS).map((m) => (
                     <option key={m} value={m}>{String(m).padStart(2, "0")}</option>
                   ))}
                 </select>
